@@ -1,6 +1,6 @@
 <a href="/todos/new" class="btn btn-primary mb-3">Create</a>
 {{>message}}
-<ul class="list-group">
+<ul class="list-group tape">
   {{#each todos}}
   <li class="list-group-item">
     <div class="row">
@@ -14,11 +14,33 @@
       <div class="col-auto">
         <a class="btn btn-secondary" href="./todos/{{ this.id }}">detail</a>
         <a class="btn btn-success" href="./todos/{{ this.id }}/edit">edit</a>
-        <form action="./todos/{{ this.id }}?_method=DELETE" method="POST" style="display: inline;">
-          <button class="btn btn-danger" type="submit">delete</button>
-        </form>
+        <button class="del-btn btn btn-danger" type="submit" data-id="{{this.id}}">delete</button>
       </div>
     </div>
   </li>
   {{/each}}
 </ul>
+
+<!-- Modal -->
+<div class=" modal fade" id="deleteWarningModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger" style="border-bottom: 0px;">
+        <h5 class="modal-title text-light" id="exampleModalLongTitle"><i class="fas fa-exclamation-triangle"></i> 刪除警告
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body bg-secondary text-center">
+        <h2>你確定要刪除嗎!?</h2>
+      </div>
+      <div class="modal-footer bg-secondary" style="border-top: 1px dashed gray;">
+        <button type="button" class="btn btn-info" data-dismiss="modal">取消 <i class="fas fa-undo"></i></button>
+        <form id="del-btn-link" action="/" method="GET" class="d-inline"><button type="submit" class="btn btn-danger">刪除
+            <i class="fas fa-trash-alt"></i></button></form>
+      </div>
+    </div>
+  </div>
+</div>

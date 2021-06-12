@@ -80,13 +80,15 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-router.delete('/:id', (req, res) => {
-  const userId = req.user.id
-  const todoId = req.params.id
-  return Todo.findOne({ id: todoId, userId })
-    .then(todo => todo.remove())
-    .then(() => res.redirect("/"))
-    .catch(err => console.log(err))
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    await Todo.destroy({ where: { id } })
+    req.flash('success_msg', '待辦清單刪除成功!')
+    return res.redirect('/')
+  } catch (err) {
+    return res.status(422).json(err)
+  }
 })
 
 module.exports = router
