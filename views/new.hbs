@@ -1,7 +1,8 @@
 <!-- ./views/layouts/new.handlebars -->
-<form action="/todos" method="POST">
+{{>message}}
+<form action="/todos/new" method="POST">
   <div class="input-group mb-3">
-    <input type="text" placeholder="name" name="name" class="form-control">
+    <input type="text" placeholder="name" name="name" class="form-control" value="{{name}}" maxlength="30" required>
     <div class="input-group-append">
       <button type="submit" class="btn btn-success">Create</button>
     </div>
