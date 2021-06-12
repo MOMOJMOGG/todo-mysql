@@ -26,21 +26,11 @@ router.post('/new', async (req, res) => {
     }
 
     const todo = await Todo.create({ name, UserId: userId })
-    console.log(todo.id, todo.UserId)
     req.flash('success_msg', '待辦清單新增成功, 可繼續更新或回到首頁!')
-    return res.redirect('/')
+    return res.redirect(`/todos/${todo.toJSON().id}/edit`)
   } catch (err) {
     return res.status(422).json(err)
   }
-
-
-  // const todo = new Todo({ name })
-  // return todo.save()
-  //   .then(() => res.redirect('/'))
-  //   .catch(err => console.log(err))
-  // return Todo.create({ name, userId })
-  //   .then(() => res.redirect('/'))
-  //   .catch(err => console.log(err))
 })
 
 router.get('/:id', async (req, res) => {
@@ -53,27 +43,41 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.get('/:id/edit', (req, res) => {
-  const userId = req.user.id
-  const todoId = req.params.id
-  return Todo.findOne({ id: todoId, userId })
-    .lean()
-    .then(todo => res.render('edit', { todo }))
-    .catch(err => console.log(err))
+router.get('/:id/edit', async (req, res) => {
+  try {
+    const id = req.params.id
+    const todo = await Todo.findByPk(id)
+    return res.render('edit', { todo: todo.toJSON() })
+  } catch (err) {
+    return res.status(422).json(err)
+  }
 })
 
-router.put('/:id', (req, res) => {
-  const userId = req.user.id
-  const todoId = req.params.id
-  const { name, isDone } = req.body // 解構賦值
-  return Todo.findOne({ id: todoId, userId })
-    .then(todo => {
-      todo.name = name
-      todo.isDone = isDone === 'on'
-      return todo.save()
-    })
-    .then(() => res.redirect(`/todos/${_id}`))
-    .catch(err => console.log(err))
+router.put('/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    let { name, isDone } = req.body
+    const errors = []
+    if (!name) {
+      errors.push({ message: '欄位不得為空白!' })
+    }
+    if (name.length > 30) {
+      errors.push({ message: '字數不得超過 30。' })
+    }
+    if (errors.length) {
+      req.flash('errors', errors)
+      return res.redirect(`/todos/${id}/edit`)
+    }
+
+    isDone = true ? isDone === 'on' : false
+
+    await Todo.update({ name, isDone }, { where: { id } })
+
+    req.flash('success_msg', '待辦事項更新成功, 可繼續更新或回到首頁!')
+    return res.redirect(`/todos/${id}/edit`)
+  } catch (err) {
+    return res.status(422).json(err)
+  }
 })
 
 router.delete('/:id', (req, res) => {

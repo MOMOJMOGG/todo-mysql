@@ -6,9 +6,11 @@
         <input type="checkbox" name="isDone" {{#if todo.isDone }} checked {{/if}}>
       </div>
     </div>
-    <input class="form-control" type="text" placeholder="name" name="name" value="{{ todo.name }}">
+    <input class="form-control" type="text" placeholder="name" name="name" value="{{ todo.name }}" maxlength="30"
+      required>
     <div class="input-group-append">
       <button class="btn btn-success" type="submit">Save</button>
+      <a href="/" type="button" class="btn btn-primary">Home</a>
     </div>
   </div>
 </form>
